@@ -1,0 +1,26 @@
+version: '3.3'
+
+networks:
+  traefik-net:
+    external: true
+services:
+  web:
+    image: https://cloud.docker.com/repository/docker/105870/cluster:tagname
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.basic.port=80"
+        - "traefik.basic.protocol=http"
+        - "traefik.backend=mydomain"
+        - "traefik.frontend.rule=Host:mydomain.com"
+        - "traefik.docker.network=traefik-net"
+        - "traefik.backend.loadbalancer.swarm=true"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.headers.SSLHost=mydomain.com"
+        - "traefik.frontend.headers.SSLForceHost=true"
+    
